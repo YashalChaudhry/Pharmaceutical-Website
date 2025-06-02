@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .endpoint {
+            margin-bottom: 20px;
+            border-left: 3px solid #3498db;
+            padding-left: 15px;
+        }
+        .method {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Medicine API Documentation</h1>
+    <p>Welcome to the Medicine API. This API allows you to manage medicine information including images and prices.</p>
+    
+    <h2>Available Endpoints</h2>
+    
+    <div class="endpoint">
+        <p><span class="method">GET</span> <code>/api/medicines</code></p>
+        <p>Get all medicines from the database.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">GET</span> <code>/api/medicines/:id</code></p>
+        <p>Get a single medicine by its ID.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">POST</span> <code>/api/medicines</code></p>
+        <p>Create a new medicine with image.</p>
+        <pre>
+// Example request body (multipart/form-data):
+{
+  "name": "Medicine Name",
+  "price": 19.99,
+  "description": "Medicine description",
+  "category": "Pain Relief",
+  "image": [file upload]
+}
+        </pre>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">PATCH</span> <code>/api/medicines/:id</code></p>
+        <p>Update a medicine (including image and price).</p>
+        <pre>
+// Example request body (multipart/form-data):
+{
+  "price": 24.99,
+  "image": [file upload]
+}
+        </pre>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">DELETE</span> <code>/api/medicines/:id</code></p>
+        <p>Delete a medicine.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">POST</span> <code>/api/medicines/import-from-assets</code></p>
+        <p>Import medicines from assets folder.</p>
+    </div>
+    
+    <h2>API Status</h2>
+    <div class="endpoint">
+        <p><span class="method">GET</span> <code>/api/status</code></p>
+        <p>Check if the API is running properly.</p>
+    </div>
+</body>
+</html>

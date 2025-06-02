@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Medicines</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Import Medicines from Assets Folder</h1>
+    <p>Click the button below to import all medicine images from the assets folder to MongoDB:</p>
+    
+    <button id="importBtn">Import Medicines</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        document.getElementById('importBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = '';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Importing medicines...';
+            
+            try {
+                const response = await fetch('/api/medicines/import-from-assets', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'success';
+                    resultDiv.textContent = data.message;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `Error: ${data.message || 'Failed to import medicines'}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.textContent = `Error: ${error.message || 'Failed to import medicines'}`;
+            }
+        });
+    </script>
+</body>
+</html>

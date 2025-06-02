@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Admin Panel</title>
+    <!-- Add console logging for debugging -->
+    <script>
+        console.log('Admin panel loading...');
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error('Global error:', message, 'at', source, lineno, colno, error);
+            return false;
+        };
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .admin-header {
+            background-color: #2e5e66;
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
+        .card-header {
+            background-color: #2e5e66;
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #2e5e66;
+            border-color: #2e5e66;
+        }
+        .btn-primary:hover {
+            background-color: #1d4046;
+            border-color: #1d4046;
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .table th {
+            background-color: #f0f0f0;
+        }
+        .form-control:focus {
+            border-color: #2e5e66;
+            box-shadow: 0 0 0 0.25rem rgba(46, 94, 102, 0.25);
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        .medicine-image {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: contain;
+        }
+        .action-btn {
+            margin-right: 5px;
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        #imagePreview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+        .category-badge {
+            background-color: #2e5e66;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="container">
+        <div class="login-container card">
+            <div class="card-header">
+                <h4 class="mb-0">Admin Login</h4>
+            </div>
+            <div class="card-body">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <div id="loginError" class="alert alert-danger d-none" role="alert">
+                        Invalid username or password!
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Section -->
+    <div id="adminPanel" class="d-none">
+        <header class="admin-header">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Y&R Pharmacy Admin Panel</h2>
+                    <button id="logoutBtn" class="btn btn-outline-light">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="row">
+                <!-- Add/Edit Medicine Form -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <span id="formTitle">Add New Medicine</span>
+                        </div>
+                        <div class="card-body">
+                            <form id="medicineForm">
+                                <input type="hidden" id="medicineId">
+                                
+                                <div class="mb-3">
+                                    <label for="medicineName" class="form-label">Medicine Name</label>
+                                    <input type="text" class="form-control" id="medicineName" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="medicinePrice" class="form-label">Price (Rs.)</label>
+                                    <input type="number" class="form-control" id="medicinePrice" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="medicineDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="medicineDescription" rows="3" required></textarea>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="medicineCategory" class="form-label">Category</label>
+                                    <select class="form-select" id="medicineCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Cold and Flu">Cold and Flu</option>
+                                        <option value="Allergies">Allergies</option>
+                                        <option value="Pain Relief">Pain Relief</option>
+                                        <option value="Digestive Health">Digestive Health</option>
+                                        <option value="Vitamins">Vitamins</option>
+                                        <option value="Cough">Cough</option>
+                                        <option value="Eye Care">Eye Care</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="medicineImage" class="form-label">Image</label>
+                                    <input type="file" class="form-control" id="medicineImage" accept="image/*">
+                                    <img id="imagePreview" class="mt-2" alt="Preview">
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i><span id="submitBtnText">Add Medicine</span>
+                                    </button>
+                                    <button type="button" id="cancelBtn" class="btn btn-secondary d-none">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Medicines List -->
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Medicines List</span>
+                            <div class="input-group" style="max-width: 300px;">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Search medicines...">
+                                <button class="btn btn-outline-light" type="button" id="searchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>Category</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="medicinesList">
+                                        <!-- Medicines will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div id="loadingSpinner" class="loading-spinner">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading medicines...</p>
+                            </div>
+                            
+                            <div id="noMedicines" class="alert alert-info d-none" role="alert">
+                                No medicines found.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Modal for Delete Confirmation -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <span id="deleteMedicineName"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="alertToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                Operation completed successfully.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
