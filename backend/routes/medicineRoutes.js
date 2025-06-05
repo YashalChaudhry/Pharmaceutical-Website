@@ -270,18 +270,7 @@ router.post('/import-from-assets', async (req, res) => {
         
         // Updated category assignment logic
         if (imageFile.toLowerCase().includes('pain')) category = 'Pain Relief';
-        else if (imageFile.toLowerCase().includes('cough') || 
-                 imageFile.toLowerCase().includes('cold') || 
-                 imageFile.toLowerCase().includes('flu') ||
-                 imageFile.toLowerCase().includes('panadol') ||
-                 imageFile.toLowerCase().includes('arinac') ||
-                 imageFile.toLowerCase().includes('corex') ||
-                 imageFile.toLowerCase().includes('coferb') ||
-                 imageFile.toLowerCase().includes('bronochol') ||
-                 imageFile.toLowerCase().includes('acefyl') ||
-                 imageFile.toLowerCase().includes('hydryllin') ||
-                 imageFile.toLowerCase().includes('norsaline') ||
-                 imageFile.toLowerCase().includes('medics coldeez')) category = 'Cold & Flu';
+        else if (imageFile.toLowerCase().includes('cough')) category = 'Cough & Cold';
         else if (imageFile.toLowerCase().includes('vitamin')) category = 'Vitamins';
         else if (imageFile.toLowerCase().includes('allergy')) category = 'Allergies';
         else if (imageFile.toLowerCase().includes('digestive')) category = 'Digestive Health';
@@ -340,21 +329,10 @@ router.post('/import-from-assets', async (req, res) => {
 // Get medicines by category
 router.get('/category/:category', async (req, res) => {
   try {
-    let category = req.params.category;
-    
-    // Handle category name variations
-    if (category === 'Cold & Flu') {
-      // Search for both Cold & Flu and Cough & Cold categories
-      const medicines = await Medicine.find({
-        category: { $in: ['Cold & Flu', 'Cough & Cold'] }
-      });
-      console.log(`Found ${medicines.length} medicines in combined Cold & Flu category`);
-      res.json(medicines);
-    } else {
-      const medicines = await Medicine.find({ category });
-      console.log(`Found ${medicines.length} medicines in category ${category}`);
-      res.json(medicines);
-    }
+    const category = req.params.category;
+    const medicines = await Medicine.find({ category });
+    console.log(`Found ${medicines.length} medicines in category ${category}`);
+    res.json(medicines);
   } catch (error) {
     console.error('Error fetching medicines by category:', error);
     res.status(500).json({ message: 'Error fetching medicines by category' });
